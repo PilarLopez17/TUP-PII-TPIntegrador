@@ -1,12 +1,11 @@
 from abc import ABC, abstractmethod
 from generador_contra import generar
 
-cursos = []
-estudiantes = []
+mis_cursos = {}
+alumnos = []
 profesores = []
+
 # Clases
-
-
 class Usuario(ABC):
     def __init__(self, nombre, apellido, email, contrasenia):
         self._nombre = nombre
@@ -29,7 +28,7 @@ class Estudiante(Usuario):
         super().__init__(nombre, apellido, email, contrasenia)
         self._legajo = legajo
         self._anio_inscripcion_carrera = anio_inscripcion_carrera
-        self._cursos = cursos
+        self._cursos = []
 
     def __str__(self):
         return super().__str__() + f"\n- Legajo: {self._legajo}\n- Año de inscripción a la carrera: {self._anio_inscripcion_carrera}"
@@ -39,7 +38,7 @@ class Estudiante(Usuario):
             self._cursos.append(curso)
             print(f"Te matriculaste con éxito en el curso: {curso.nombre}")
         else:
-            print("Ya estás matriculado en este curso.")
+            print("Error! Ya estás matriculado en este curso.")
 
 
 class Profesor(Usuario):
@@ -47,7 +46,7 @@ class Profesor(Usuario):
         super().__init__(nombre, apellido, email, contrasenia)
         self._titulo = titulo
         self._anio_egreso = anio_egreso
-        self._cursos = cursos
+        self._cursos = []
 
     def dictar_curso(self, curso):
         self._cursos.append(curso)
@@ -68,12 +67,12 @@ class Curso:
 # Estudiantes y Profesores ya cargados
 
 
-estu1 = Estudiante("Lucia", "Miranda", "lucia@gmail.com", "utn", 12345, 2023)
-estudiantes.append(estu1)
+alum1 = Estudiante("Lucia", "Miranda", "lucia@gmail.com", "utn", 12345, 2023)
+alumnos.append(alum1)
 
-estu2 = Estudiante("Victoria", "Menna",
+alum2 = Estudiante("Victoria", "Menna",
                    "victoria@gmail.com", "12345", 56789, 2019)
-estudiantes.append(estu2)
+alumnos.append(alum2)
 
 profe1 = Profesor("Pilar", "Lopez", "pilar@gmail.com",
                   "utn123", "Tecnica en Programación", 2022)
@@ -96,16 +95,15 @@ while True:
     if opcion == 1:
         email = input("Ingrese su email: ")
         
-        estudiante_existe = None
-        for estudiante in estudiantes:
-            if email == estudiante._email:
-                estudiante_existe = estudiante
+        for alumno in alumnos:
+            if email == alumno._email:
+                alumno_existe = alumno
                 break
 
-        if estudiante_existe:
+        if alumno_existe:
             contrasenia = input("Ingrese su contraseña: ")
-            if estudiante.validar_credenciales(email, contrasenia):
-                print(f"Bienvenid@, {estudiante_existe._nombre} {estudiante_existe._apellido}!")
+            if alumno.validar_credenciales(email, contrasenia):
+                print(f"Bienvenid@, {alumno_existe._nombre} {alumno_existe._apellido}!")
                 while True:
                     print("-- Submenú Alumno --")
                     print("1. Matricularse a un curso")
@@ -124,14 +122,15 @@ while True:
                 print("Error! Datos incorrectos")
         else:
             print("No se encuentra registrado. Debe darse de alta en alumnado")
+
     elif opcion == 2:
         email = input("Ingrese su email: ")
         
-        profe_existe = None
         for profe in profesores:
             if email == profe._email:
                 profe_existe = profe
                 break
+            
         if profe_existe:
             contrasenia = input("Ingrese su contraseña: ")
             if profe.validar_credenciales(email, contrasenia):
