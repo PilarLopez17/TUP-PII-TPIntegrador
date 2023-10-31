@@ -43,6 +43,13 @@ class Estudiante(Usuario):
                 print("Error! Contraseña de matriculación incorrecta.")
         else:
             print(f"Error! Ya está matriculado en el curso '{curso._nombre}'.")
+    
+    def desmatricular_del_curso(self, curso):
+        if curso in self._cursos:
+            self._cursos.remove(curso)
+            print(f"Desmatriculado con éxito del curso '{curso._nombre}'.")
+        else:
+            print(f"No estás matriculado en el curso '{curso._nombre}'. No se puede desmatricular.")
 
 
 class Profesor(Usuario):
@@ -90,12 +97,13 @@ profesores.append(profe2)
 
 # Funciones submenú
 
+
 def op1_alumno(alumno):
     if not mis_cursos:
         print("\nNo hay ningun curso\n")
     else:
         print("\nTodos los cursos:")
-        
+       
         for i, curso in enumerate(mis_cursos.values(), 1):
             print(f"{i}. {curso._nombre}")
 
@@ -107,8 +115,24 @@ def op1_alumno(alumno):
         curso_seleccionado = list(mis_cursos.values())[op_curso - 1]#se resta 1 porque la lista empieza en 0
 
         alumno.matricular_en_curso(curso_seleccionado)
-            
+
 def op2_alumno(alumno):
+    if not alumno._cursos:
+        print("\nNo se encuentra matriculado en ningun curso.\n")
+    else:
+        print("\nTe encuentras matriculado en los siguientes cursos:")
+        for i, curso in enumerate(alumno_existe._cursos, 1):
+            print(f"{i}. {curso._nombre}")
+
+        opcion_desmatricular = int(input("Ingrese número de curso del que desea desmatricularse: "))
+
+        while opcion_desmatricular < 1 or opcion_desmatricular > len(alumno_existe._cursos):
+            opcion_desmatricular = int(input("\nError! Ingrese un número de curso válido:\n"))
+
+        seleccionado_desmatricular = alumno_existe._cursos[opcion_desmatricular - 1]
+        alumno_existe.desmatricular_del_curso(seleccionado_desmatricular)       
+            
+def op3_alumno(alumno):
     if not alumno._cursos:
         print("\nNo se encuentra matriculado en ningun curso.\n")
     else:
@@ -179,14 +203,17 @@ while True:
                 while True:
                     print("\n-- Submenú Alumno --\n")
                     print("1. Matricularse a un curso")
-                    print("2. Ver cursos")
-                    print("3. Volver al menú principal")
+                    print("2. Desmatricularse a un curso")                    
+                    print("3. Ver cursos")
+                    print("4. Volver al menú principal")
                     subopcion_alum = int(input("Seleccione una opción: "))
                     if subopcion_alum == 1:
                         op1_alumno(alumno)
                     elif subopcion_alum == 2:
                         op2_alumno(alumno)
                     elif subopcion_alum == 3:
+                        op3_alumno(alumno)
+                    elif subopcion_alum == 4:
                         break
                     else:
                         print("Opcion incorrecta. Ingrese una opción válida (1-3)\n")
@@ -232,8 +259,9 @@ while True:
         if not mis_cursos:
             print("\nNo hay cursos\n")
         else:
-            print("\nCursos disponibles:")
-            for curso in mis_cursos.values():
+            print("\nCursos disponibles (ordenados alfabéticamente):")
+            sorted_cursos = sorted(mis_cursos.values(), key=lambda curso: curso._nombre)
+            for curso in sorted_cursos:
                 print(f"Materia: {curso._nombre} - Carrera: Tecnicatura Universitaria en Programación")
                     
     elif opcion == 4:
