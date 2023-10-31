@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from generador_contra import generar
+from datetime import date
 
 mis_cursos = {}
 alumnos = []
@@ -35,10 +36,10 @@ class Estudiante(Usuario):
 
     def matricular_en_curso(self, curso):
         if curso not in self._cursos:
-            contrasenia_ingresada = input(f"Ingrese la contraseña de matriculación del curso '{curso._nombre}': ")
+            contrasenia_ingresada = input(f"Ingrese la contraseña de matriculación del curso {curso._nombre}: ")
             if contrasenia_ingresada == curso._contrasenia_matriculacion:
                 self._cursos.append(curso)
-                print(f"Matriculado con éxito en el curso '{curso._nombre}'.")
+                print(f"Matriculado con éxito en el curso {curso._nombre}.")
             else:
                 print("Error! Contraseña de matriculación incorrecta.")
         else:
@@ -47,9 +48,9 @@ class Estudiante(Usuario):
     def desmatricular_del_curso(self, curso):
         if curso in self._cursos:
             self._cursos.remove(curso)
-            print(f"Desmatriculado con éxito del curso '{curso._nombre}'.")
+            print(f"Desmatriculado con éxito del curso {curso._nombre}.")
         else:
-            print(f"No estás matriculado en el curso '{curso._nombre}'. No se puede desmatricular.")
+            print(f"No estás matriculado en el curso {curso._nombre}. No se puede desmatricular.")
 
 
 class Profesor(Usuario):
@@ -71,12 +72,42 @@ class Profesor(Usuario):
 
 
 class Curso:
+    prox_cod = 0
+    
     def __init__(self, nombre):
         self._nombre = nombre
         self._contrasenia_matriculacion = generar(self)  #funcion extraida del tp anterior
-
+        Curso.prox_cod += 1
+        self.archivos = []
+    
     def __str__(self):
         return f"- Curso: {self._nombre}\n- Contraseña: {self._contrasenia_matriculacion}"
+
+    def nuevo_archivo(self, archivo):
+        self.archivos.append(archivo)
+    
+
+class Carrera():
+    def __init__(self, nombre, cant_anios):
+        self._nombre = nombre
+        self._cant_anios = cant_anios
+    
+    def __str__(self) -> str:
+        return f"- Nombre: {self._nombre} \n- Cantidad de años: {self._cant_anios}"
+    
+    def get_cantidad_materias(self):
+        pass
+
+class Archivo():
+
+    def __init__(self, nombre, formato):
+        self._nombre = nombre
+        self._fecha_hoy = date.today()
+        self._formato = formato
+
+    def __str__(self) -> str:
+        return f"- Nombre: {self._nombre} \n- Fecha: {self._fecha_hoy} \n- Formato: {self._formato}"
+    
 
 # Estudiantes y Profesores ya cargados
 
@@ -140,13 +171,20 @@ def op3_alumno(alumno):
         for i, curso in enumerate(alumno._cursos, 1):
             print(f"{i}. {curso._nombre}")
 
-        opcion_ver_alum = int(input("Ingrese numero de curso que desea ver: "))
+        opcion_ver_alum = int(input("Ingrese numero de curso que desea ver los archivos: "))
 
         while opcion_ver_alum < 1 or opcion_ver_alum > len(alumno._cursos):
             opcion_ver_alum = int(input("\nError! Ingrese un número de curso válido:\n"))
         
         seleccionado_ver_alum = alumno._cursos[opcion_ver_alum - 1]
         print(f"\nNombre: {seleccionado_ver_alum._nombre.title()}")
+        
+        if len(seleccionado_ver_alum.archivos) == 0:
+            print("No hay archivos en este curso.")
+        else:
+            print("Archivos disponibles:\n")
+            for archivo in seleccionado_ver_alum.archivos:
+                print(archivo._nombre + "." + archivo._formato)
 
 def op1_profe(profe, mis_cursos):
     nombre_curso = input("\nIngrese el nombre del curso: ")
@@ -173,7 +211,29 @@ def op2_profe(profe):
         
         seleccionado_ver_profe = profe._cursos[opcion_ver_profe - 1]
         print(f"\nNombre: {seleccionado_ver_profe._nombre.title()}")
+        print(f"Código: {seleccionado_ver_profe.prox_cod}") 
         print(f"Contraseña: {seleccionado_ver_profe._contrasenia_matriculacion}")
+        print(f"Cantidad de archivos: {len(seleccionado_ver_profe.archivos)}")
+
+        if seleccionado_ver_profe.archivos:
+            print("Archivos adjuntos:")
+            for i, archivo in enumerate(seleccionado_ver_profe.archivos, 1):
+                print(f"{i}. {archivo._nombre}.{archivo._formato}")
+        else:
+            print("No hay archivos en este curso.")
+
+        agregar_archivos = input("¿Desea agregar un archivo adjunto? (Si/No): ").lower()
+        if agregar_archivos == "si":
+            while True:
+                nombre_archivo = input("Ingrese el nombre del archivo: ")
+                formato_archivo = input("Ingrese el formato del archivo: ")
+                archivo = Archivo(nombre_archivo, formato_archivo)
+                seleccionado_ver_profe.nuevo_archivo(archivo)
+                print("Archivo adjunto agregado con éxito.")
+
+                continuar = input("¿Desea agregar otro archivo adjunto? (Si/No): ").lower()
+                if continuar != "si":
+                    break
 
 
 # Menu principal
