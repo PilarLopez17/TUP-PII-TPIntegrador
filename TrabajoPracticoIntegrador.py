@@ -184,7 +184,7 @@ def op3_alumno(alumno):
         else:
             print("Archivos disponibles:\n")
             for archivo in seleccionado_ver_alum.archivos:
-                print(archivo._nombre + "." + archivo._formato)
+                 print(f"Archivo: {archivo._nombre}.{archivo._formato}, Fecha: {archivo._fecha_hoy}")
 
 def op1_profe(profe, mis_cursos):
     nombre_curso = input("\nIngrese el nombre del curso: ")
@@ -218,7 +218,7 @@ def op2_profe(profe):
         if seleccionado_ver_profe.archivos:
             print("Archivos adjuntos:")
             for i, archivo in enumerate(seleccionado_ver_profe.archivos, 1):
-                print(f"{i}. {archivo._nombre}.{archivo._formato}")
+                print(f"{i}. {archivo._nombre}.{archivo._formato} (fecha: {archivo._fecha_hoy})")
         else:
             print("No hay archivos en este curso.")
 
